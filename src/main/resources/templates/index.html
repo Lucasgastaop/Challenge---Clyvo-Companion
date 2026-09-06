@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Início')}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: topbar}"></nav>
+<main class="wrap">
+    <section class="hero">
+        <p class="muted">Painel</p>
+        <h1 th:text="'Olá, ' + ${usuarioLogado.nomeUsuario}">Olá</h1>
+        <p th:if="${isTutor}">
+            Acompanhe seus pets e registre peso, alimentação e exercício com limites clínicos validados.
+        </p>
+        <p th:if="${isVeterinario}">
+            Consulte a agenda e emita prescrições médicas vinculadas ao pet da consulta.
+        </p>
+    </section>
+
+    <div class="grid">
+        <article class="card" th:if="${isTutor}">
+            <h2>Meus pets</h2>
+            <p class="muted">Cadastre o animal para depois lançar os logs de saúde.</p>
+            <a class="btn" th:href="@{/tutor/pets}">Abrir cadastro</a>
+        </article>
+        <article class="card" th:if="${isTutor}">
+            <h2>Log de saúde</h2>
+            <p class="muted">Fluxo completo do tutor: métricas com validação de limites.</p>
+            <a class="btn" th:href="@{/tutor/logs-saude/novo}">Registrar log</a>
+        </article>
+        <article class="card" th:if="${isVeterinario}">
+            <h2>Consultas</h2>
+            <p class="muted">Agenda da clínica. A partir da consulta, emita a prescrição.</p>
+            <a class="btn" th:href="@{/vet/consultas}">Ver agenda</a>
+        </article>
+        <article class="card" th:if="${isVeterinario}">
+            <h2>Prescrições</h2>
+            <p class="muted">Fluxo completo do veterinário: medicamento, dosagem e período.</p>
+            <a class="btn" th:href="@{/vet/prescricoes/nova}">Emitir prescrição</a>
+        </article>
+    </div>
+</main>
+<footer class="site">Clyvo Care · FIAP Java Advanced · 3ª Sprint</footer>
+</body>
+</html>

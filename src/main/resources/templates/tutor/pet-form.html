@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Cadastrar pet')}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: topbar}"></nav>
+<main class="wrap">
+    <section class="hero">
+        <h1>Cadastrar pet</h1>
+        <p>Informe os dados básicos do animal. O vínculo com o tutor logado é preenchido automaticamente.</p>
+    </section>
+
+    <form th:action="@{/tutor/pets}" th:object="${pet}" method="post" class="panel">
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-error">
+            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+        </div>
+        <label>
+            Nome
+            <input type="text" th:field="*{nomePet}" maxlength="100">
+            <span class="field-error" th:errors="*{nomePet}"></span>
+        </label>
+        <label>
+            Espécie
+            <select th:field="*{especie}">
+                <option value="">Selecione</option>
+                <option th:each="especie : ${especies}" th:value="${especie}" th:text="${especie}">Cachorro</option>
+            </select>
+            <span class="field-error" th:errors="*{especie}"></span>
+        </label>
+        <label>
+            Data de nascimento
+            <input type="date" th:field="*{dtNascimento}">
+            <span class="field-error" th:errors="*{dtNascimento}"></span>
+        </label>
+        <div class="actions">
+            <button type="submit">Salvar pet</button>
+            <a class="btn btn-secondary" th:href="@{/tutor/pets}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

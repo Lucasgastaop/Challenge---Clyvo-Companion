@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Meus pets')}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: topbar}"></nav>
+<main class="wrap">
+    <section class="hero">
+        <h1>Meus pets</h1>
+        <p>Cadastre o pet antes de lançar os logs de saúde.</p>
+        <a class="btn" th:href="@{/tutor/pets/novo}">Novo pet</a>
+    </section>
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="table-wrap" th:if="${!pets.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>Nome</th>
+                <th>Espécie</th>
+                <th>Nascimento</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="pet : ${pets}">
+                <td th:text="${pet.nomePet}">Thor</td>
+                <td th:text="${pet.especie}">Cachorro</td>
+                <td th:text="${pet.dtNascimento}">2020-05-10</td>
+                <td><a th:href="@{/tutor/logs-saude/novo}">Registrar log</a></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p th:if="${pets.isEmpty()}" class="muted">Nenhum pet cadastrado ainda.</p>
+</main>
+</body>
+</html>

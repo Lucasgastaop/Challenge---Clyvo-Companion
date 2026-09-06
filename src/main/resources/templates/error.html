@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Erro')}"></head>
+<body>
+<main class="wrap">
+    <section class="hero">
+        <h1>Não foi possível concluir a operação</h1>
+        <p>Verifique o endereço acessado ou volte ao início da aplicação.</p>
+        <a class="btn" th:href="@{/}">Voltar ao início</a>
+    </section>
+</main>
+</body>
+</html>

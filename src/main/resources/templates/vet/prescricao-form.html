@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Emitir prescrição')}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: topbar}"></nav>
+<main class="wrap">
+    <section class="hero">
+        <h1>Emitir prescrição médica</h1>
+        <p>Informe medicamento, dosagem, frequência e o período do tratamento.</p>
+    </section>
+
+    <article class="card" th:if="${agendamento != null}" style="margin-bottom:1rem">
+        <h2>Consulta de origem</h2>
+        <p>
+            Pet <strong th:text="${agendamento.nomePet}">Thor</strong>
+            · <span th:text="${agendamento.tipoServico}">Consulta</span>
+            · <span th:text="${#temporals.format(agendamento.dtAgenda, 'dd/MM/yyyy HH:mm')}">20/09/2026</span>
+            · <span th:text="${agendamento.nomeClinica}">Clínica</span>
+        </p>
+    </article>
+
+    <form th:action="@{/vet/prescricoes}" th:object="${prescricao}" method="post" class="panel">
+        <input type="hidden" th:if="${agendamento != null}" name="idAgendamento" th:value="${agendamento.idAgendamento}">
+        <div th:if="${#fields.hasGlobalErrors()}" class="alert alert-error">
+            <p th:each="err : ${#fields.globalErrors()}" th:text="${err}"></p>
+        </div>
+        <label>
+            Pet
+            <select th:field="*{idPet}">
+                <option value="">Selecione</option>
+                <option th:each="pet : ${pets}" th:value="${pet.idPet}" th:text="${pet.nomePet}">Thor</option>
+            </select>
+            <span class="field-error" th:errors="*{idPet}"></span>
+        </label>
+        <label>
+            Medicamento
+            <input type="text" th:field="*{nomeMedicamento}" maxlength="100">
+            <span class="field-error" th:errors="*{nomeMedicamento}"></span>
+        </label>
+        <label>
+            Dosagem
+            <input type="text" th:field="*{dsDosagem}" maxlength="50" placeholder="Ex.: 1 comprimido">
+            <span class="field-error" th:errors="*{dsDosagem}"></span>
+        </label>
+        <label>
+            Frequência (horas)
+            <input type="number" min="1" max="72" th:field="*{frequenciaHoras}">
+            <span class="field-error" th:errors="*{frequenciaHoras}"></span>
+        </label>
+        <label>
+            Data de início
+            <input type="date" th:field="*{dtInicio}">
+            <span class="field-error" th:errors="*{dtInicio}"></span>
+        </label>
+        <label>
+            Data de término
+            <input type="date" th:field="*{dtFim}">
+            <span class="field-error" th:errors="*{dtFim}"></span>
+            <span class="field-error" th:errors="*{periodoValido}"></span>
+        </label>
+        <div class="actions">
+            <button type="submit">Emitir prescrição</button>
+            <a class="btn btn-secondary" th:href="@{/vet/prescricoes}">Cancelar</a>
+        </div>
+    </form>
+</main>
+</body>
+</html>

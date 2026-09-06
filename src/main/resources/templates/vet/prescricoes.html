@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Prescrições')}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: topbar}"></nav>
+<main class="wrap">
+    <section class="hero">
+        <h1>Prescrições médicas</h1>
+        <p>Medicamentos emitidos para os pets da clínica.</p>
+        <a class="btn" th:href="@{/vet/prescricoes/nova}">Nova prescrição</a>
+    </section>
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="table-wrap" th:if="${!prescricoes.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>Pet</th>
+                <th>Medicamento</th>
+                <th>Dosagem</th>
+                <th>Frequência</th>
+                <th>Início</th>
+                <th>Fim</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="item : ${prescricoes}">
+                <td th:text="${item.nomePet}">Thor</td>
+                <td th:text="${item.nomeMedicamento}">Vermífugo</td>
+                <td th:text="${item.dsDosagem}">1 comprimido</td>
+                <td th:text="${item.frequenciaHoras} + ' h'">24 h</td>
+                <td th:text="${item.dtInicio}">2026-09-04</td>
+                <td th:text="${item.dtFim}">2026-09-11</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p th:if="${prescricoes.isEmpty()}" class="muted">Nenhuma prescrição emitida ainda.</p>
+</main>
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Consultas')}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: topbar}"></nav>
+<main class="wrap">
+    <section class="hero">
+        <h1>Consultas e agendamentos</h1>
+        <p>Selecione um atendimento para emitir a prescrição do pet.</p>
+    </section>
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="table-wrap" th:if="${!agendamentos.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>Data</th>
+                <th>Pet</th>
+                <th>Clínica</th>
+                <th>Serviço</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="agenda : ${agendamentos}">
+                <td th:text="${#temporals.format(agenda.dtAgenda, 'dd/MM/yyyy HH:mm')}">20/09/2026</td>
+                <td th:text="${agenda.nomePet}">Thor</td>
+                <td th:text="${agenda.nomeClinica}">Pet Care</td>
+                <td th:text="${agenda.tipoServico}">Consulta</td>
+                <td th:text="${agenda.status}">AGENDADO</td>
+                <td>
+                    <a th:href="@{/vet/prescricoes/nova(idPet=${agenda.idPet}, idAgendamento=${agenda.idAgendamento})}">
+                        Emitir prescrição
+                    </a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p th:if="${agendamentos.isEmpty()}" class="muted">Nenhum agendamento encontrado.</p>
+</main>
+</body>
+</html>

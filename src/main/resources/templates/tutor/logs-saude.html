@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments/head :: head('Logs de saúde')}"></head>
+<body>
+<nav th:replace="~{fragments/nav :: topbar}"></nav>
+<main class="wrap">
+    <section class="hero">
+        <h1>Logs de saúde</h1>
+        <p>Histórico de peso, alimentação, exercício e demais métricas dos seus pets.</p>
+        <a class="btn" th:href="@{/tutor/logs-saude/novo}">Novo registro</a>
+    </section>
+    <div th:replace="~{fragments/alerts :: alerts}"></div>
+
+    <div class="table-wrap" th:if="${!logs.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>Data</th>
+                <th>Pet</th>
+                <th>Métrica</th>
+                <th>Valor</th>
+                <th>Observação</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="log : ${logs}">
+                <td th:text="${#temporals.format(log.dtRegistro, 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+                <td th:text="${log.nomePet}">Thor</td>
+                <td th:text="${log.metrica}">peso</td>
+                <td th:text="${log.vlMetrica}">12.4</td>
+                <td th:text="${log.obs}">-</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <p th:if="${logs.isEmpty()}" class="muted">Nenhum log registrado ainda.</p>
+</main>
+</body>
+</html>

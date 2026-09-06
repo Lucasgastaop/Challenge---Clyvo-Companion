@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<nav th:fragment="topbar" class="topbar">
+    <a class="brand" th:href="@{/}">Clyvo <span>Care</span></a>
+    <div class="nav-links">
+        <a th:href="@{/}">Início</a>
+        <a th:if="${isTutor}" th:href="@{/tutor/pets}">Meus pets</a>
+        <a th:if="${isTutor}" th:href="@{/tutor/logs-saude}">Logs de saúde</a>
+        <a th:if="${isVeterinario}" th:href="@{/vet/consultas}">Consultas</a>
+        <a th:if="${isVeterinario}" th:href="@{/vet/prescricoes}">Prescrições</a>
+    </div>
+    <div class="user-box" th:if="${usuarioLogado != null}">
+        <span th:text="${usuarioLogado.nomeUsuario}">Usuário</span>
+        <span class="badge" th:text="${usuarioLogado.tpPerfil}">PERFIL</span>
+        <form th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-ghost">Sair</button>
+        </form>
+    </div>
+</nav>
+</body>
+</html>
