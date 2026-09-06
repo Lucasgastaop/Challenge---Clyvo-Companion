@@ -1,6 +1,6 @@
-# Clyvo Companion
+# Clyvo Companion (Clyvo Care)
 
-API REST desenvolvida em **Java 17** e **Spring Boot** para o challenge **Java Advanced (FIAP)**. O sistema apoia tutores no acompanhamento da saúde e dos cuidados de pets: cadastro de animais, métricas de saúde, prescrições, agendamentos em clínicas e auditoria de erros da aplicação.
+Aplicação web em **Java 17** e **Spring Boot** para o challenge **Java Advanced (FIAP)**. O Clyvo Care apoia tutores e veterinários no acompanhamento da saúde de pets: cadastro de animais, logs de saúde, prescrições, agendamentos e auditoria.
 
 **Repositório:** https://github.com/Lucasgastaop/Challenge-Clyvo-Companion
 
@@ -21,9 +21,12 @@ Cronograma de atividades: [`documentos/CRONOGRAMA.md`](documentos/CRONOGRAMA.md)
 | Model | `model` | Entidades JPA mapeadas ao ERD (`TB_CC_*`) |
 | Repository | `repository` | Spring Data JPA (JPQL e Query Methods) |
 | Service | `service` | Regras de negócio, cache e transações |
-| Controller | `controller` | Endpoints REST |
-| DTO | `dto` | Contratos de entrada e saída da API |
+| Security | `security` | Autenticação, papéis e política de acesso ao pet |
+| Controller REST | `controller` | Endpoints JSON |
+| Controller Web | `controller.web` | Telas Thymeleaf |
+| DTO | `dto` | Contratos de entrada/saída com Bean Validation |
 | Exception | `exception` | Tratamento centralizado de erros |
+| Migrações | `db/migration` | Versionamento do schema com Flyway |
 
 ### Entidades
 
@@ -39,9 +42,10 @@ Cronograma de atividades: [`documentos/CRONOGRAMA.md`](documentos/CRONOGRAMA.md)
 
 ## Tecnologias
 
-- Java 17
-- Spring Boot 4
-- Spring Data JPA
+- Java 17 e Spring Boot 4
+- Spring Data JPA + Flyway
+- Spring Security (form login + HTTP Basic)
+- Thymeleaf + HTML5/CSS3
 - Bean Validation
 - SpringDoc OpenAPI (Swagger)
 - Oracle Database (FIAP) / H2 (desenvolvimento)
@@ -54,9 +58,26 @@ Cronograma de atividades: [`documentos/CRONOGRAMA.md`](documentos/CRONOGRAMA.md)
 - JDK 17+
 - Maven Wrapper incluído no projeto (`mvnw`)
 
+### H2 (recomendado para demonstração local)
+
+Cria as tabelas e os dados iniciais automaticamente via Flyway (`V1` e `V2`).
+
+```powershell
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
+```
+
+Abra http://localhost:8080/login
+
+| Perfil | E-mail | Senha |
+|--------|--------|-------|
+| Tutor | `maria@email.com` | `senha123` |
+| Veterinário | `carlos.vet@clyvo.com` | `senha123` |
+
+As senhas da carga inicial são recodificadas para **BCrypt** na primeira subida.
+
 ### Oracle (ambiente FIAP)
 
-Configuração padrão em `application-oracle.properties`:
+Configuração em `application-oracle.properties`:
 
 | Parâmetro | Valor |
 |-----------|-------|
@@ -65,25 +86,33 @@ Configuração padrão em `application-oracle.properties`:
 | SID | ORCL |
 | Usuário | rm563960 |
 
-A senha deve ser informada em `application-local.properties` (a partir de `application-local.properties.example`) ou pela variável de ambiente `DB_PASSWORD`.
+O Flyway executa as mesmas migrações. Se o schema já tiver as tabelas da sprint anterior, esvazie-o antes da primeira execução (o `V1` faz `CREATE TABLE`).
 
 ```powershell
 .\mvnw.cmd spring-boot:run
 ```
 
-### H2 (desenvolvimento local)
-
-```powershell
-.\mvnw.cmd spring-boot:run "-Dspring-boot.run.profiles=dev"
-```
-
-### Acesso à aplicação
+### Acesso
 
 | Recurso | URL |
 |---------|-----|
-| API | http://localhost:8080 |
+| Aplicação (login) | http://localhost:8080/login |
+| Painel | http://localhost:8080/ |
 | Swagger UI | http://localhost:8080/swagger-ui.html |
-| H2 Console (perfil dev) | http://localhost:8080/h2-console |
+| H2 Console (perfil `dev`) | http://localhost:8080/h2-console |
+
+A API REST continua disponível e exige autenticação (sessão após o login ou HTTP Basic com o mesmo e-mail/senha).
+
+## Camada web (3ª Sprint)
+
+| Rota | Perfil | Função |
+|------|--------|--------|
+| `/tutor/pets` | TUTOR | Cadastro de pets |
+| `/tutor/logs-saude` | TUTOR | Fluxo 1 — registrar log de saúde |
+| `/vet/consultas` | VETERINARIO | Agenda e origem da prescrição |
+| `/vet/prescricoes` | VETERINARIO | Fluxo 2 — emitir prescrição médica |
+
+Validações dos fluxos: Bean Validation nos DTOs + regras de limite de métrica (`MetricaSaudeValidator`) e período da prescrição.
 
 ## API REST
 
@@ -100,6 +129,8 @@ A senha deve ser informada em `application-local.properties` (a partir de `appli
 | Logs de sistema | `/logs-sistema` |
 
 Operações disponíveis: `GET` (listagem paginada e por ID), `POST`, `PUT` e `DELETE`, conforme o recurso.
+
+`POST` de log de saúde é exclusivo do tutor; `POST` de prescrição é exclusivo do veterinário.
 
 ### Regras de negócio
 
@@ -136,6 +167,15 @@ GET /pets?nome=thor&page=0&size=10&sort=nomePet,asc
 | Cronograma da sprint | [`documentos/CRONOGRAMA.md`](documentos/CRONOGRAMA.md) |
 | Diagramas, arquitetura e relatório de testes | Documento Word (entrega da equipe) |
 | Coleção Postman (entrega) | [`documentos/clyvo-companion.postman_collection.json`](documentos/clyvo-companion.postman_collection.json) — **18 requisições** numeradas (01–18); importar e rodar no Collection Runner com a API ativa |
+
+## Recursos implementados (3ª Sprint)
+
+- Versionamento do banco com Flyway (`V1__create_tables.sql` e `V2__insert_initial_data.sql`)
+- Spring Security com papéis `ROLE_TUTOR` e `ROLE_VETERINARIO`
+- Camada de visualização Thymeleaf com navegação por perfil
+- Fluxo do tutor: cadastro de pet e log de saúde com limites de métrica
+- Fluxo do veterinário: consulta da agenda e emissão de prescrição
+- Senhas persistidas com BCrypt
 
 ## Recursos implementados (1ª Sprint)
 
