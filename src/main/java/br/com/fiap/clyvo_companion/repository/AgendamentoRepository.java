@@ -25,6 +25,14 @@ public interface AgendamentoRepository extends JpaRepository<Agendamento, Long> 
 
     @Query("""
             SELECT a FROM Agendamento a
+            JOIN FETCH a.pet
+            JOIN FETCH a.clinica
+            ORDER BY a.dtAgenda DESC
+            """)
+    List<Agendamento> findAllComPetEClinica();
+
+    @Query("""
+            SELECT a FROM Agendamento a
             WHERE (:idPet IS NULL OR a.pet.idPet = :idPet)
               AND (:idClinica IS NULL OR a.clinica.idClinica = :idClinica)
               AND (:status IS NULL OR a.status = :status)

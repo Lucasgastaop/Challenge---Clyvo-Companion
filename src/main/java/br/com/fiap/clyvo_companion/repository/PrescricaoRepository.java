@@ -24,6 +24,13 @@ public interface PrescricaoRepository extends JpaRepository<Prescricao, Long> {
 
     @Query("""
             SELECT p FROM Prescricao p
+            JOIN FETCH p.pet
+            ORDER BY p.dtInicio DESC
+            """)
+    List<Prescricao> findAllComPet();
+
+    @Query("""
+            SELECT p FROM Prescricao p
             WHERE p.pet.idPet = :idPet
               AND (p.dtFim IS NULL OR p.dtFim >= :hoje)
             """)

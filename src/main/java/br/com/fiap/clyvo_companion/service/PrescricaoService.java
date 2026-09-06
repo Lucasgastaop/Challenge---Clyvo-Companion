@@ -2,6 +2,7 @@ package br.com.fiap.clyvo_companion.service;
 
 import br.com.fiap.clyvo_companion.dto.PrescricaoRequestDTO;
 import br.com.fiap.clyvo_companion.dto.PrescricaoResponseDTO;
+import br.com.fiap.clyvo_companion.exception.BusinessRuleException;
 import br.com.fiap.clyvo_companion.exception.ResourceNotFoundException;
 import br.com.fiap.clyvo_companion.model.Pet;
 import br.com.fiap.clyvo_companion.model.Prescricao;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class PrescricaoService {
@@ -52,11 +54,19 @@ public class PrescricaoService {
                 .map(PrescricaoResponseDTO::from);
     }
 
+    @Transactional(readOnly = true)
+    public List<PrescricaoResponseDTO> listarTodas() {
+        return prescricaoRepository.findAllComPet().stream()
+                .map(PrescricaoResponseDTO::from)
+                .toList();
+    }
+
     @Transactional
     @CacheEvict(value = {"prescricoes", "prescricoesAtivas", "petsResumo"}, allEntries = true)
     public PrescricaoResponseDTO criar(PrescricaoRequestDTO dto) {
         Pet pet = petRepository.findById(dto.getIdPet())
                 .orElseThrow(() -> new ResourceNotFoundException("Pet não encontrado: " + dto.getIdPet()));
+        validarPeriodo(dto);
 
         Prescricao prescricao = Prescricao.builder()
                 .pet(pet)
@@ -76,6 +86,7 @@ public class PrescricaoService {
         Prescricao prescricao = buscarEntidade(id);
         Pet pet = petRepository.findById(dto.getIdPet())
                 .orElseThrow(() -> new ResourceNotFoundException("Pet não encontrado: " + dto.getIdPet()));
+        validarPeriodo(dto);
 
         prescricao.setPet(pet);
         prescricao.setNomeMedicamento(dto.getNomeMedicamento());
@@ -99,5 +110,11 @@ public class PrescricaoService {
     private Prescricao buscarEntidade(Long id) {
         return prescricaoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Prescrição não encontrada: " + id));
+    }
+
+    private void validarPeriodo(PrescricaoRequestDTO dto) {
+        if (dto.getDtFim() != null && dto.getDtInicio() != null && dto.getDtFim().isBefore(dto.getDtInicio())) {
+            throw new BusinessRuleException("A data de término deve ser igual ou posterior à data de início");
+        }
     }
 }

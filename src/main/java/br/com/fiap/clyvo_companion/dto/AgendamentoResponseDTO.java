@@ -16,7 +16,9 @@ public class AgendamentoResponseDTO {
 
     private Long idAgendamento;
     private Long idPet;
+    private String nomePet;
     private Long idClinica;
+    private String nomeClinica;
     private LocalDateTime dtAgenda;
     private String tipoServico;
     private String status;
@@ -25,7 +27,9 @@ public class AgendamentoResponseDTO {
         AgendamentoResponseDTO dto = new AgendamentoResponseDTO();
         dto.setIdAgendamento(agendamento.getIdAgendamento());
         dto.setIdPet(agendamento.getPet().getIdPet());
+        dto.setNomePet(agendamento.getPet().getNomePet());
         dto.setIdClinica(agendamento.getClinica().getIdClinica());
+        dto.setNomeClinica(agendamento.getClinica().getNomeClinica());
         dto.setDtAgenda(agendamento.getDtAgenda());
         dto.setTipoServico(agendamento.getTipoServico());
         dto.setStatus(agendamento.getStatus());

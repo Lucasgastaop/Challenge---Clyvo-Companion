@@ -17,6 +17,14 @@ public interface LogSaudeRepository extends JpaRepository<LogSaude, Long> {
 
     @Query("""
             SELECT l FROM LogSaude l
+            JOIN FETCH l.pet p
+            WHERE p.usuario.idUsuario = :idUsuario
+            ORDER BY l.dtRegistro DESC
+            """)
+    List<LogSaude> findByTutorComPet(@Param("idUsuario") Long idUsuario);
+
+    @Query("""
+            SELECT l FROM LogSaude l
             WHERE (:idPet IS NULL OR l.pet.idPet = :idPet)
               AND (
                 LOWER(l.metrica) = 'temperatura' AND (l.vlMetrica < 37 OR l.vlMetrica > 39)

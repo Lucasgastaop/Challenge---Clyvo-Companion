@@ -17,6 +17,7 @@ public class LogSaudeResponseDTO {
 
     private Long idLog;
     private Long idPet;
+    private String nomePet;
     private LocalDateTime dtRegistro;
     private BigDecimal vlMetrica;
     private String metrica;
@@ -26,6 +27,7 @@ public class LogSaudeResponseDTO {
         LogSaudeResponseDTO dto = new LogSaudeResponseDTO();
         dto.setIdLog(log.getIdLog());
         dto.setIdPet(log.getPet().getIdPet());
+        dto.setNomePet(log.getPet().getNomePet());
         dto.setDtRegistro(log.getDtRegistro());
         dto.setVlMetrica(log.getVlMetrica());
         dto.setMetrica(log.getMetrica());

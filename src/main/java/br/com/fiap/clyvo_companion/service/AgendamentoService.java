@@ -18,6 +18,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Service
 public class AgendamentoService {
 
@@ -47,6 +49,13 @@ public class AgendamentoService {
     public Page<AgendamentoResponseDTO> listar(Long idPet, Long idClinica, String status, Pageable pageable) {
         return agendamentoRepository.buscarComFiltros(idPet, idClinica, status, pageable)
                 .map(AgendamentoResponseDTO::from);
+    }
+
+    @Transactional(readOnly = true)
+    public List<AgendamentoResponseDTO> listarTodos() {
+        return agendamentoRepository.findAllComPetEClinica().stream()
+                .map(AgendamentoResponseDTO::from)
+                .toList();
     }
 
     @Transactional

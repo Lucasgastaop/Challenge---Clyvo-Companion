@@ -12,7 +12,9 @@ import br.com.fiap.clyvo_companion.repository.UsuarioRepository;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -91,6 +93,17 @@ public class PetService {
     public Page<PetResponseDTO> listar(String nome, String especie, Long idUsuario, Pageable pageable) {
         return petRepository.buscarComFiltros(nome, especie, idUsuario, pageable)
                 .map(PetResponseDTO::from);
+    }
+
+    @Transactional(readOnly = true)
+    public List<PetResponseDTO> listarParaSelecao(Long idUsuario) {
+        return petRepository.buscarComFiltros(
+                        null,
+                        null,
+                        idUsuario,
+                        PageRequest.of(0, 100, Sort.by("nomePet")))
+                .map(PetResponseDTO::from)
+                .getContent();
     }
 
     @Transactional

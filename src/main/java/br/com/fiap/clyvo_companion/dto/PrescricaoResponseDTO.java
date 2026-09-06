@@ -16,6 +16,7 @@ public class PrescricaoResponseDTO {
 
     private Long idPrescricao;
     private Long idPet;
+    private String nomePet;
     private String nomeMedicamento;
     private String dsDosagem;
     private Integer frequenciaHoras;
@@ -26,6 +27,7 @@ public class PrescricaoResponseDTO {
         PrescricaoResponseDTO dto = new PrescricaoResponseDTO();
         dto.setIdPrescricao(prescricao.getIdPrescricao());
         dto.setIdPet(prescricao.getPet().getIdPet());
+        dto.setNomePet(prescricao.getPet().getNomePet());
         dto.setNomeMedicamento(prescricao.getNomeMedicamento());
         dto.setDsDosagem(prescricao.getDsDosagem());
         dto.setFrequenciaHoras(prescricao.getFrequenciaHoras());
