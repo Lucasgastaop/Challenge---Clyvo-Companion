@@ -2,10 +2,13 @@ package br.com.fiap.clyvo_companion.service;
 
 import br.com.fiap.clyvo_companion.model.LogSistema;
 import br.com.fiap.clyvo_companion.repository.LogSistemaRepository;
+import br.com.fiap.clyvo_companion.security.UsuarioDetails;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +55,12 @@ public class LogSistemaAuditoriaService {
     }
 
     private String resolverUsuario(HttpServletRequest request) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null
+                && authentication.isAuthenticated()
+                && authentication.getPrincipal() instanceof UsuarioDetails usuario) {
+            return truncar(usuario.getUsername(), 100);
+        }
         String usuario = request.getHeader(HEADER_USUARIO);
         if (usuario != null && !usuario.isBlank()) {
             return truncar(usuario.trim(), 100);
